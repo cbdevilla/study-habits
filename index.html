@@ -1,0 +1,493 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Study Habit Buddies</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+        <style>
+            #slide {
+                display: none;
+            }
+            #results {
+                display: none;
+            }
+            
+            * {
+                box-sizing: border-box;
+                margin: 0;
+            }
+            html {
+                width: 100%;
+                height: 100%;
+            }
+            body {
+                width: 100%;
+                height: 100%;
+                font-family: sans-serif;
+            }
+            .container {
+                width: 100%;
+                height: 100%;
+            }
+            
+            .button {
+                min-height: 2em;
+                background-color: #ccc;
+                color: #000;
+                font-size: 1.25em;
+                border: medium solid #000;
+                border-radius: .5em;
+            }
+            .button:hover {
+                background-color: #fff;
+            }
+            .button:active {
+                background-color: #999;
+            }
+            
+            .menu {
+                width: 100%;
+                height: 100%;
+                padding: 10%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+            }
+            .menu h1 {
+                margin-bottom: .5em;
+            }
+            .menu p {
+                margin-bottom: 1em;
+            }
+            .menu button {
+                padding: 1em 2em;
+            }
+            
+            .slide {
+                width: 100%;
+                height: 100%;
+            }
+            .slide-question {
+                width: 100%;
+                height: 50%;
+                float: left;
+                padding: 2%;
+                display: flex;
+                flex-direction: column;
+            }
+            .progress-bar {
+                height: 1em;
+                background-color: #fff;
+                border: medium solid #000;
+                border-radius: .5em;
+                margin-bottom: .5em;
+            }
+            .progress-fill {
+                display: block;
+                background-color: #060;
+                width: 0;
+                height: 100%;
+                margin: 0;
+                border-radius: .5em;
+            }
+            .category-name{
+                font-size: 1.25em;
+                text-transform: uppercase;
+            }
+            .habit-description{
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .habit-description p {
+                font-size: 2em;
+                text-align: center;
+            }
+            .slide-answer {
+                width: 100%;
+                height: 50%;
+                float: left;
+                padding: 1%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .slide-button {
+                width: 100%;
+                height: 24%;
+            }
+            @media only screen and (orientation: landscape) {
+                .slide-question {
+                    width: 66.66%;
+                    height: 100%;
+                }
+                .slide-answer {
+                    width: 33.33%;
+                    height: 100%;
+                    justify-content: center;
+                }
+                .slide-button {
+                    height: 12%;
+                    margin: .2em 0em;
+                }
+            }
+            
+            .results {
+                padding: 1%;
+                text-align: center;
+            }
+            .result-title {
+                margin-bottom: 1em;
+                text-transform: uppercase;
+            }
+            .result-all {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            .result-category {
+                display: inline-block;
+                margin: 1em 1%;
+                padding: 1em;
+                border: medium solid #000;
+                border-radius: .5em;
+                overflow: auto;
+            }
+            .result-img {
+                display: none;
+            }
+            .result-cat-name {
+                font-size: .75em;
+                text-transform: uppercase;
+            }
+            .result-desc {
+                font-size: .75em;
+            }
+            .result-share {
+                margin-top: .5em;
+                font-size: .75em;
+            }
+            @media only screen and (min-width: 768px) {
+                .results {
+                    text-align: left;
+                }
+                .result-title {
+                    text-align: center;
+                }
+                .result-category {
+                    width: 47.5%;
+                }
+                .result-img {
+                    float: left;
+                    margin-top: .5em;
+                    margin-right: .5em;
+                }
+                .result-desc {
+                    overflow: hidden;
+                }
+                .result-share {
+                    text-align: right;
+                }
+            }
+        </style>
+        <script>
+            // names of each of the different categories
+            var categories = [
+                "Health and Fitness",
+                "Working Conditions",
+                "Reading and Studying",
+                "Note Taking and Library Use",
+                "Academic Tests and Activities"];
+            // background colors for each category
+            var bgColors = ["#ffffcc",  // yellow
+                            "#e6e6ff",  // blue
+                            "#ffccff",  // purple
+                            "#ccffcc"]; // green
+            // text for each slide and their associated category
+            var items = [
+                // 1-10
+                {cat:0,text:"I obtain at least 8 hours of sleep every day."},
+                {cat:0,text:"I eat healthy and balanced meals at regular intervals."},
+                {cat:0,text:"I get some exercise and recreation every day."},
+                {cat:0,text:"I take steps to solve problems which worry me and which interfere with my concentration."},
+                {cat:1,text:"I find a quiet, well-lit and comfortably-heated space to study."},
+                {cat:1,text:"I follow a regular schedule."},
+                {cat:1,text:"I avoid distractions while I am studying."},
+                {cat:1,text:"I allow time in my weekly schedule for working on special reports and term projects."},
+                {cat:1,text:"I write down my class assignments clearly and keep them where I can find and refer to them."},
+                {cat:1,text:"I make certain that I understand the purpose and nature of the professor's assignment before I leave class."},
+                // 11-20
+                {cat:1,text:"I organize my study materials and review the assignment before I start to work."},
+                {cat:1,text:"I start work promptly and I avoid procrastinating."},
+                {cat:1,text:"I keep my mind on my work and avoid daydreaming."},
+                {cat:1,text:"I complete my assignments on time and according to instructions."},
+                {cat:2,text:"I review the assignment before breaking it down in detail."},
+                {cat:2,text:"I adjust my reading speed to the material I study."},
+                {cat:2,text:"I find the main ideas in each paragraph and organize the details around it."},
+                {cat:2,text:"I stop at natural breaks in my readin and try to repeat the main ideas in my own words."},
+                {cat:2,text:"I look up the meaning of words I don't understand and develop a working vocabulary for each subject."},
+                {cat:2,text:"I outline the material as I read."},
+                // 21-30
+                {cat:2,text:"I use the table of contents and the index."},
+                {cat:2,text:"I relate the text to the maps, graphs, and tables included in the assignment."},
+                {cat:2,text:"I anticipate what the author will say as I read."},
+                {cat:2,text:"I recall information and relate it to new material as I read."},
+                {cat:2,text:"I question and evaluate the content of what I read, as I read."},
+                {cat:2,text:"I take time to summarize the main ideas and draw conclusions."},
+                {cat:2,text:"I read for pleasure."},
+                {cat:3,text:"I keep a section in my notebook for each subject and I keep them together and in order."},
+                {cat:3,text:"I write my notes in outline style to show ideas and subordinate details."},
+                {cat:3,text:"I take satisfactory notes from class, study assignments, and research assignments."},
+                // 31-40
+                {cat:3,text:"I review my class notes as I study at home."},
+                {cat:3,text:"I summarize my notes frequently."},
+                {cat:3,text:"I review my notes before examinations."},
+                {cat:3,text:"I use school library facilities."},
+                {cat:3,text:"I understand how to use various library aids such as encyclopedias, dictionaries, reference materials, and periodicals."},
+                {cat:3,text:"I know when and how to outline."},
+                {cat:4,text:"I do well on essay tests."},
+                {cat:4,text:"I do well on multiple choice, true-false and matching tests."},
+                {cat:4,text:"I am a good speller."},
+                {cat:4,text:"I am good in English grammar."},
+                // 40-45
+                {cat:4,text:"I can express myself well in writing, class dicussions, and in front of the class."},
+                {cat:4,text:"I like to study and do homework."},
+                {cat:4,text:"I have a good memory."},
+                {cat:4,text:"I stop and analyze my work and progress in each course."},
+                {cat:4,text:"I apply what I have learned in one school course to my other subjects whenever appropriate."}];
+            // data for possible results
+            var results = {
+                cat0res0:{
+                    name:"Snoozie",
+                    img:"",
+                    desc:"Snoozie finds it difficult to concentrate on studies because she's often feeling tired or hungry. Eating regular and balanced meals and getting enough sleep every night can help her have the energy to focus on lectures and assignments."},
+                cat0res1:{
+                    name:"Napple",
+                    img:"",
+                    desc:"Napple sometimes skips meals, or have too much junk food as a snack. Some nights, she stays up late even though she needs to wake up early in the morning. If Napple practices better eating and sleeping habits, she can be better prepared to tackle school activities."},
+                cat0res2:{
+                    name:"Wakelet",
+                    img:"",
+                    desc:"Wakelet tries to maintain a healthy diet and get a good amount of sleep every night. Although there's still room to improve, he has developed some good habits that help him maintain his body, which helps him keep up with his assignments."},
+                cat0res3:{
+                    name:"Leapling",
+                    img:"",
+                    desc:"Leapling is always full of energy and ready to tackle any challenge, thanks to habits that keep them in peak physical shape. They make sure to eat complete and balanced meals, set aside time for daily exercise, and get a full 8 hours of sleep."},
+                cat1res0:{
+                    name:"Clutterette",
+                    img:"",
+                    desc:"Clutterette often forgets to study because she doesn't have a schedule and usually tells herself she can \"do it later\". When she does sit down to study, her messy desk makes it hard to properly concentrate. Maintaining a clean environment and setting aside time everyday will help her stay on top of her assignments."},
+                cat1res1:{
+                    name:"Scatterling",
+                    img:"",
+                    desc:"Scatterling tries to maintain a good working environment, but he sometimes finds himself playing games instead of studying. Reorganizing his desk to be free of distractions will help him stay focused on things he needs to do."},
+                cat1res2:{
+                    name:"Neatree",
+                    img:"",
+                    desc:"Neatree keeps his desk tidy, organized, and free from distractions. He tries to stick to a schedule for working on assignments and reviewing his notes."},
+                cat1res3:{
+                    name:"Sortera",
+                    img:"",
+                    desc:"Sortera keeps up with her studies by setting a regular schedule for reviewing her notes and working on assignments. She keeps her work area organized, well-lit, and free from distraction."},
+                cat2res0:{
+                    name:"Confuzzle",
+                    img:"",
+                    desc:"Confuzzle often needs to review the same material multiple times to understand what he's reading. Developing habits and skills such as looking up the meaning of a word he doesn't know and making use of the table of contents can help make his study time much more effective."},
+                cat2res1:{
+                    name:"Skimmie",
+                    img:"",
+                    desc:"Skimmie has been trying to develop her reading skills, but still needs more practice at it."},
+                cat2res2:{
+                    name:"Readra",
+                    img:"",
+                    desc:"Readra has built up her vocabulary and reading comprehension skills by spending some of her free time reading books for pleasure."},
+                cat2res3:{
+                    name:"Knowrite",
+                    img:"",
+                    desc:"Knowrite has mastered skills that let her quickly grasp the meaning of anything she reads. She makes an outline of the material as she's reading, identifies the main idea of each paragraph, and repeats it in her own words to make sure she's understood it."},
+                cat3res0:{
+                    name:"Blanklet",
+                    img:"",
+                    desc:"Blanklet doesn't make a habit of taking down notes in class. Having a set of summarized notes could help him review for tests and exams more effectively by having important information organized and available at a glance."},
+                cat3res1:{
+                    name:"Scribbert",
+                    img:"",
+                    desc:"Scribbert tries to keep notes of what he's learned in class, but hasn't yet developed the techniques that make note-taking really effective. If he learns to use an outline to take down notes in class and use a different notebook for each subject to keep his notes organized, they will be much more effective when he needs to review them."},
+                cat3res2:{
+                    name:"Writeley",
+                    img:"",
+                    desc:"Writely does his best to take down notes in class. He uses a different section of his notebook for each class to keep his notes organized per subject, and writes them in outline style to show important keywords and connected ideas."},
+                cat3res3:{
+                    name:"Wellnote",
+                    img:"",
+                    desc:"Wellnote is able to review efficiently for exams because of his well-organized and outlined set of notes. He also makes good use of the library to look up references for his assignments and projects."},
+                cat4res0:{
+                    name:"Guessler",
+                    img:"",
+                    desc:"Guessler has difficulty when it comes to exams, especially when they have essay questions. He also finds it hard to express his ideas during class discussions."},
+                cat4res1:{
+                    name:"Quizlet",
+                    img:"",
+                    desc:"Quizlet occasionally has spelling or grammar errors in her schoolwork, which she forgets to check before submitting."},
+                cat4res2:{
+                    name:"Scorewyn",
+                    img:"",
+                    desc:"Scorewyn performs well in class activities, and gets good grades in his exams. He also maintains good spelling and grammar."},
+                cat4res3:{
+                    name:"Gradella",
+                    img:"",
+                    desc:"Gradella excels in her exams, sometimes even being able to get a perfect score on them. She regularly double-checks her work before submitting it to make sure it's free from errors."}};
+            
+            // game state variables
+            var responses = []
+            var currentItem = -1
+            
+            function clearResponses() {
+                responses = []
+                for (i = 0; i < items.length; i++) {
+                    responses.push(0);
+                }
+            }
+            
+            function startQuiz() {
+                clearResponses();
+                document.getElementById("menu").style.display = "none";
+                document.getElementById("results").style.display = "none";
+                currentItem = 0;
+                updateSlide(currentItem);
+                document.getElementById("slide").style.display = "block";
+            }
+            
+            function recordAnswer(answer) {
+                responses[currentItem] = answer;
+                currentItem++
+                if (currentItem < items.length) {
+                    updateSlide(currentItem);
+                }
+                else {
+                    displayResults();
+                }
+            }
+            
+            function updateSlide(num) {
+                // update slide text
+                document.getElementById("cat-name").innerHTML = categories[items[num].cat];
+                document.getElementById("slide-text").innerHTML = items[num].text;
+                // update background color
+                var i = num % bgColors.length;
+                document.getElementById("slide").style.backgroundColor = bgColors[i];
+                // update progress bar
+                var percent = 100 * ((num+1) / items.length);
+                document.getElementById("progress-fill").style.width = percent + "%";
+            }
+            
+            function displayResults() {
+                document.getElementById("menu").style.display = "none";
+                document.getElementById("slide").style.display = "none";
+                document.getElementById("results").style.display = "block";
+                
+                var total;
+                var n;
+                var avg;
+                var result;
+                for (cat = 0; cat < 5; cat++) {
+                    // get average response value for each category
+                    total = 0;
+                    n = 0;
+                    for (i = 0; i < responses.length; i++) {
+                        if (items[i].cat == cat) {
+                            total += responses[i];
+                            n++;
+                        }
+                    }
+                    avg = total/n;
+                    
+                    // get result code based on average
+                    result = "cat" + cat + "res";
+                    if (avg <= 1.75) {result += "0";}
+                    else if (avg <= 2.5) {result += "1";}
+                    else if (avg <= 3.25) {result += "2";}
+                    else {result += "3";}
+                    
+                    // update result view
+                    document.getElementById("result-cat"+cat+"-title").innerHTML = categories[cat];
+                    document.getElementById("result-cat"+cat+"-name").innerHTML = results[result].name;
+                    document.getElementById("result-cat"+cat+"-desc").innerHTML = results[result].desc;
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <!--Main menu-->
+            <div id="menu" class="menu">
+                <h1>Who are your study habit buddies?</h1>
+                <p>Test yourself on how well you practice various study habits and find out which of the 20 characters match you.</p>
+                <div><button class="button" onclick="startQuiz();">Start</button></div>
+                <!--<a href="#" onclick="clearResponses();displayResults();">debug: view results page</a>-->
+            </div>
+            
+            <!--Slide for study habit description-->
+            <div id="slide" class="slide">
+                <div class="slide-question">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <p id="cat-name" class="category-name">Category Name</p>
+                    <div class="habit-description"><p id="slide-text">Description of a study habit.</p></div>
+                </div>
+                <div class="slide-answer">
+                    <button class="button slide-button" onclick="recordAnswer(4)">Always</button>
+                    <button class="button slide-button" onclick="recordAnswer(3)">Often</button>
+                    <button class="button slide-button" onclick="recordAnswer(2)">Sometimes</button>
+                    <button class="button slide-button" onclick="recordAnswer(1)">Rarely</button>
+                </div>
+            </div>
+            
+            <!--Results screen-->
+            <div id="results" class="results">
+                <h1 class="result-title">Your Results</h1>
+                <div class="result-all">
+                    <div class="result-category">
+                        <p id="result-cat0-title" class="result-cat-name">CategoryA Name</p>
+                        <img src="" width=100 height=100 id="result-cat0-img" class="result-img" />
+                        <h2 id="result-cat0-name" class="result-name">Character Name</h2>
+                        <p id="result-cat0-desc" class="result-desc">Character description goes here.</p>
+                        <p class="result-share">Share this result?</p>
+                    </div>
+                    <div class="result-category">
+                        <p id="result-cat1-title" class="result-cat-name">CategoryB Name</p>
+                        <img src="" width=100 height=100 id="result-cat1-img" class="result-img" />
+                        <h2 id="result-cat1-name" class="result-name">Character Name</h2>
+                        <p id="result-cat1-desc" class="result-desc">Character description goes here.</p>
+                        <p class="result-share">Share this result?</p>
+                    </div>
+                    <div class="result-category">
+                        <p id="result-cat2-title" class="result-cat-name">CategoryC Name</p>
+                        <img src="" width=100 height=100 id="result-cat2-img" class="result-img" />
+                        <h2 id="result-cat2-name" class="result-name">Character Name</h2>
+                        <p id="result-cat2-desc" class="result-desc">Character description goes here.</p>
+                        <p class="result-share">Share this result?</p>
+                    </div>
+                    <div class="result-category">
+                        <p id="result-cat3-title" class="result-cat-name">CategoryD Name</p>
+                        <img src="" width=100 height=100 id="result-cat3-img" class="result-img" />
+                        <h2 id="result-cat3-name" class="result-name">Character Name</h2>
+                        <p id="result-cat3-desc" class="result-desc">Character description goes here.</p>
+                        <p class="result-share">Share this result?</p>
+                    </div>
+                    <div class="result-category">
+                        <p id="result-cat4-title" class="result-cat-name">CategoryE Name</p>
+                        <img src="" width=100 height=100 id="result-cat4-img" class="result-img" />
+                        <h2 id="result-cat4-name" class="result-name">Character Name</h2>
+                        <p id="result-cat4-desc" class="result-desc">Character description goes here.</p>
+                        <p class="result-share">Share this result?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

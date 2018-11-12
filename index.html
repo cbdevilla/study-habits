@@ -421,13 +421,31 @@
         </script>
     </head>
     <body>
+        <script>
+            window.fbAsyncInit = function() {
+                FB.init({
+                    appId            : '1014125755460765',
+                    autoLogAppEvents : true,
+                    xfbml            : true,
+                    version          : 'v3.2'
+                });
+            };
+            
+            (function(d, s, id){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "https://connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        </script>
         <div class="container">
             <!--Main menu-->
             <div id="menu" class="menu">
                 <h1>Who are your study habit buddies?</h1>
                 <p>Test yourself on how well you practice various study habits and find out which of the 20 characters match you.</p>
                 <div><button class="button" onclick="startQuiz();">Start</button></div>
-                <!--<a href="#" onclick="clearResponses();displayResults();">debug: view results page</a>-->
+                <a href="#" onclick="clearResponses();displayResults();">debug: view results page</a>
             </div>
             
             <!--Slide for study habit description-->
@@ -487,6 +505,16 @@
                         <p class="result-share">Share this result?</p>
                     </div>
                 </div>
+                <button id="share-button" class="button">Share</button>
+                <script>
+                    document.getElementById('share-button').onclick = function() {
+                        FB.ui({
+                            method: 'share',
+                            display: 'popup',
+                            href: 'https://cbdevilla.github.io/study-habits/',
+                        }, function(response){});
+                    }
+                </script>
             </div>
         </div>
     </body>

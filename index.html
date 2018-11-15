@@ -423,7 +423,7 @@
                     document.getElementById("result-cat"+cat+"-title").innerHTML = categories[cat];
                     document.getElementById("result-cat"+cat+"-name").innerHTML = results[result].name;
                     document.getElementById("result-cat"+cat+"-desc").innerHTML = results[result].desc;
-                    document.getElementById("result-cat"+cat+"-share").addEventListener("click", function() { shareResultFB(results[result].desc); });
+                    document.getElementById("result-cat"+cat+"-share").addEventListener("click", (function(text){ return function(){shareResultFB(text);} })(results[result].desc.toString()) );
                 }
             }
             

@@ -167,8 +167,14 @@
                 font-size: .75em;
             }
             .result-share {
+                display: block;
                 margin-top: .5em;
+                margin-left: auto;
+                margin-right: auto;
                 font-size: .75em;
+                min-height: 1.5em;
+                border: thin solid #000;
+                border-radius: .25em;
             }
             @media only screen and (min-width: 768px) {
                 .results {
@@ -189,7 +195,8 @@
                     overflow: hidden;
                 }
                 .result-share {
-                    text-align: right;
+                    margin-right: 0;
+                    margin-left: auto;
                 }
             }
         </style>
@@ -416,7 +423,17 @@
                     document.getElementById("result-cat"+cat+"-title").innerHTML = categories[cat];
                     document.getElementById("result-cat"+cat+"-name").innerHTML = results[result].name;
                     document.getElementById("result-cat"+cat+"-desc").innerHTML = results[result].desc;
+                    document.getElementById("result-cat"+cat+"-share").addEventListener("click", function() { shareResultFB(results[result].desc); });
                 }
+            }
+            
+            function shareResultFB(quoteText) {
+                FB.ui({
+                    method: 'share',
+                    display: 'popup',
+                    href: 'https://cbdevilla.github.io/study-habits/',
+                    quote: quoteText,
+                }, function(response){});
             }
         </script>
         <!-- Facebook Open Graph tags -->
@@ -479,48 +496,37 @@
                         <img src="" width=100 height=100 id="result-cat0-img" class="result-img" />
                         <h2 id="result-cat0-name" class="result-name">Character Name</h2>
                         <p id="result-cat0-desc" class="result-desc">Character description goes here.</p>
-                        <p class="result-share">Share this result?</p>
+                        <button id="result-cat0-share" class="button result-share">Share on FB</p>
                     </div>
                     <div class="result-category">
                         <p id="result-cat1-title" class="result-cat-name">CategoryB Name</p>
                         <img src="" width=100 height=100 id="result-cat1-img" class="result-img" />
                         <h2 id="result-cat1-name" class="result-name">Character Name</h2>
                         <p id="result-cat1-desc" class="result-desc">Character description goes here.</p>
-                        <p class="result-share">Share this result?</p>
+                        <button id="result-cat1-share" class="button result-share">Share on FB</p>
                     </div>
                     <div class="result-category">
                         <p id="result-cat2-title" class="result-cat-name">CategoryC Name</p>
                         <img src="" width=100 height=100 id="result-cat2-img" class="result-img" />
                         <h2 id="result-cat2-name" class="result-name">Character Name</h2>
                         <p id="result-cat2-desc" class="result-desc">Character description goes here.</p>
-                        <p class="result-share">Share this result?</p>
+                        <button id="result-cat2-share" class="button result-share">Share on FB</p>
                     </div>
                     <div class="result-category">
                         <p id="result-cat3-title" class="result-cat-name">CategoryD Name</p>
                         <img src="" width=100 height=100 id="result-cat3-img" class="result-img" />
                         <h2 id="result-cat3-name" class="result-name">Character Name</h2>
                         <p id="result-cat3-desc" class="result-desc">Character description goes here.</p>
-                        <p class="result-share">Share this result?</p>
+                        <button id="result-cat3-share" class="button result-share">Share on FB</p>
                     </div>
                     <div class="result-category">
                         <p id="result-cat4-title" class="result-cat-name">CategoryE Name</p>
                         <img src="" width=100 height=100 id="result-cat4-img" class="result-img" />
                         <h2 id="result-cat4-name" class="result-name">Character Name</h2>
                         <p id="result-cat4-desc" class="result-desc">Character description goes here.</p>
-                        <p class="result-share">Share this result?</p>
+                        <button id="result-cat4-share" class="button result-share">Share on FB</p>
                     </div>
                 </div>
-                <button id="share-button" class="button">Share</button>
-                <script>
-                    document.getElementById('share-button').onclick = function() {
-                        FB.ui({
-                            method: 'share',
-                            display: 'popup',
-                            href: 'https://cbdevilla.github.io/study-habits/',
-                            quote: 'Result description goes here',
-                        }, function(response){});
-                    }
-                </script>
             </div>
         </div>
     </body>
